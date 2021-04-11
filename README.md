@@ -18,6 +18,7 @@ features that make it literally the best terminal emulator ever:
 + **zoom/change font size**: same bindings as above, but holding down shift as
   well. `alt-home` returns to default
 + **copy text** with `alt-c`, **paste** is `alt-v` or `shift-insert`
++ **open new terminal** in the same directory with `shift-alt-reterun`
 
 ## Pretty stuff
 
@@ -26,12 +27,14 @@ features that make it literally the best terminal emulator ever:
 + Transparency/alpha, which is also adjustable from your `Xresources`.
 + Default font is system "mono" at 14pt, meaning the font will match your
   system font.
++ Dynamic cursor color, cursor color changes based on the text color it is on.
 
 ## Other st patches
 
 + Boxdraw
 + Ligatures
 + font2
++ Hide cursor
 + updated to latest version 0.8.4
 
 ## Installation for newbs
@@ -46,9 +49,6 @@ sudo make install
 
 Note that [scroll](https://github.com/lukesmithxyz/scroll) is automatically
 pulled and installed when you make this build of st.
-
-Users of Arch-based distros can also install it from the AUR as
-[st-luke-git](https://aur.archlinux.org/packages/st-luke-git/).
 
 Obviously, `make` is required to build. `fontconfig` is required for the
 default build, since it asks `fontconfig` for your system monospace font.  It
