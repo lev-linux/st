@@ -171,6 +171,8 @@ static unsigned int mouseshape = XC_xterm;
 static unsigned int mousefg = 7;
 static unsigned int mousebg = 0;
 
+# include "autocomplete.h"
+
 /*
  * Color used to display font attributes when fontconfig selected a font which
  * doesn't match the ones requested.
@@ -268,7 +270,7 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,               XK_c,           clipcopy,       {.i =  0} },
 	{ ShiftMask,            XK_Insert,      clippaste,      {.i =  0} },
 	{ MODKEY,               XK_v,           clippaste,      {.i =  0} },
-	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
+	{ MODKEY,               XK_p,           selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
 	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
 	{ ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
@@ -293,6 +295,14 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,               XK_o,           externalpipe,   {.v = copyoutput } },
 	{ Mod1Mask,             XK_Escape,      externalpipe,   {.v = visualselectcmd } },
 	{ MODKEY,               XK_Return,      newterm,        {.i =  0} },
+	{ MODKEY,               XK_slash,       autocomplete,   { .i = ACMPL_WORD        } },
+	{ MODKEY,               XK_period,      autocomplete,   { .i = ACMPL_FUZZY_WORD  } },
+	{ MODKEY,               XK_comma,       autocomplete,   { .i = ACMPL_FUZZY       } },
+	{ MODKEY,               XK_apostrophe,  autocomplete,   { .i = ACMPL_SUFFIX      } },
+	{ MODKEY,               XK_semicolon,   autocomplete,   { .i = ACMPL_SURROUND    } },
+	{ MODKEY,               XK_bracketright,autocomplete,   { .i = ACMPL_WWORD       } },
+	{ MODKEY,               XK_bracketleft, autocomplete,   { .i = ACMPL_FUZZY_WWORD } },
+	{ MODKEY,               XK_equal,       autocomplete,   { .i = ACMPL_UNDO        } },
 };
 
 /*
