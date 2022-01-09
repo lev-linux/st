@@ -245,7 +245,14 @@ static MouseShortcut mshortcuts[] = {
 static char *openurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -o", "externalpipe", NULL };
 static char *copyurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -c", "externalpipe", NULL };
 static char *copyoutput[] = { "/bin/sh", "-c", "st-copyout", "externalpipe", NULL };
-
+static const char * visualselectcmd [] = { "/bin/sh", "-c",
+	"tmp=`mktemp`;"
+	"cat > $tmp;"
+	"(st -n pop-up -g 120x35 -e "
+		"$SHELL -c \"nvim +'%s/ $// | set nonu nornu nosmd nosc hidden noru' $tmp\");"
+	"rm $tmp",
+	NULL
+};
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function        argument */
@@ -285,6 +292,7 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,               XK_y,           externalpipe,   {.v = copyurlcmd } },
 	{ TERMMOD,              XK_Return,      newterm,        {.i =  0} },
 	{ MODKEY,               XK_o,           externalpipe,   {.v = copyoutput } },
+	{ Mod1Mask,             XK_Escape,      externalpipe,   {.v = visualselectcmd } },
 };
 
 /*
