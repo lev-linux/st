@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "mono:pixelsize=14:antialias=true:autohint=true";
+static char *font = "monospace:pixelsize=16:antialias=true:autohint=true";
 static char *font2[] = { "Symbola:pixelsize=14:antialias=true:autohint=true" };
 static int borderpx = 2;
 
@@ -107,10 +107,15 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.92;
+float alpha = 0.8;
 float alphaOffset = 0.0;
 float alphaUnfocus;
 
+#define pywal "/home/salastro/.cache/wal/colors-wal-st.h"
+
+#if __has_include(pywal)
+#include pywal
+#else
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	"#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
@@ -146,7 +151,8 @@ unsigned int defaultfg = 259;
 unsigned int defaultbg = 258;
 unsigned int defaultcs = 256;
 unsigned int defaultrcs = 257;
-unsigned int background = 258;
+#endif
+unsigned int background = 256;
 
 /*
  * Default shape of cursor
