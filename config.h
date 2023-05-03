@@ -6,7 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static char *font = "monospace:pixelsize=16:antialias=true:autohint=true";
-static char *font2[] = { "Symbola:pixelsize=14:antialias=true:autohint=true" };
+static char *font2[] = { "Symbola:pixelsize=14:antialias=true:autohint=true", "fontawesome:size=13", "JoyPixels:pixelsize=14" };
 static int borderpx = 2;
 
 /*
@@ -107,7 +107,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.8;
+float alpha = 0.85;
 float alphaOffset = 0.0;
 float alphaUnfocus;
 
