@@ -5,8 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "monospace:pixelsize=16:antialias=true:autohint=true";
-static char *font2[] = { "Symbola:pixelsize=14:antialias=true:autohint=true", "fontawesome:size=13", "JoyPixels:pixelsize=14" };
+static char *font = "FiraCode:pixelsize=16:antialias=true:autohint=true";
+static char *font2[] = { "JoyPixels:pixelsize=14:antialias=true:autohint=true" };
 static int borderpx = 2;
 
 /*
