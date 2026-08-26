@@ -1,0 +1,8 @@
+ncurses-devel
+glibc-devel
+libX11-devel
+libXft-devel
+fontconfig-devel
+freetype-devel
+harfbuzz-devel
+pkg-config
