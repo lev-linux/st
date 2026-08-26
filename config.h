@@ -111,11 +111,11 @@ float alpha = 0.85;
 float alphaOffset = 0.0;
 float alphaUnfocus;
 
-#define pywal "/home/salastro/.cache/wal/colors-wal-st.h"
-
-#if __has_include(pywal)
-#include pywal
-#else
+// #define pywal "/home/salastro/.cache/wal/colors-wal-st.h"
+//
+// #if __has_include(pywal)
+// #include pywal
+// #else
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	"#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
@@ -151,7 +151,7 @@ unsigned int defaultfg = 259;
 unsigned int defaultbg = 258;
 unsigned int defaultcs = 256;
 unsigned int defaultrcs = 257;
-#endif
+// #endif
 unsigned int background = 0;
 
 /*
