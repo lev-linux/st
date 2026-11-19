@@ -2526,6 +2526,20 @@ resize(XEvent *e)
 	cresize(e->xconfigure.width, e->xconfigure.height);
 }
 
+/*
+ * SIGUSR1 (e.g. from pywal) asks for an Xresources reload. The handler only
+ * sets a flag and run() reloads between frames: reloading inside the handler
+ * freed the fonts while a redraw was in progress, and st crashed in harfbuzz.
+ */
+static volatile sig_atomic_t reloadpending = 0;
+static void reload(void);
+
+static void
+sigreload(int sig)
+{
+	reloadpending = 1;
+}
+
 void
 run(void)
 {
@@ -2556,6 +2570,11 @@ run(void)
 	cresize(w, h);
 
 	for (timeout = -1, drawing = 0, lastblink = (struct timespec){0};;) {
+		if (reloadpending) {
+			reloadpending = 0;
+			reload();
+		}
+
 		FD_ZERO(&rfd);
 		FD_SET(ttyfd, &rfd);
 		FD_SET(xfd, &rfd);
@@ -2771,8 +2790,8 @@ xrdb_load(void)
 	XFlush(dpy);
 }
 
-void
-reload(int sig)
+static void
+reload(void)
 {
 	xrdb_load();
 
@@ -2788,8 +2807,6 @@ reload(int sig)
 
 	/* triggers re-render if we're visible. */
 	ttywrite("\033[O", 3, 1);
-
-	signal(SIGUSR1, reload);
 }
 
 void
@@ -2869,7 +2886,10 @@ run:
 	setlocale(LC_CTYPE, "");
 	XSetLocaleModifiers("");
 	xrdb_load();
-	signal(SIGUSR1, reload);
+	/* sigaction, not signal(): with -D_XOPEN_SOURCE signal() is one-shot */
+	struct sigaction sa = { .sa_handler = sigreload };
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGUSR1, &sa, NULL);
 
 	if(!(xw.dpy = XOpenDisplay(NULL)))
 		die("Can't open display\n");
