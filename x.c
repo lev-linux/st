@@ -79,6 +79,7 @@ static void clippaste(const Arg *);
 static void numlock(const Arg *);
 static void selpaste(const Arg *);
 static void changealpha(const Arg *);
+void xloadalpha(void);
 static void zoom(const Arg *);
 static void zoomabs(const Arg *);
 static void zoomreset(const Arg *);
@@ -337,7 +338,10 @@ changealpha(const Arg *arg)
     alpha = clamp(alpha, 0.0, 1.0);
     alphaUnfocus = clamp(alpha-alphaOffset, 0.0, 1.0);
 
-    xloadcols();
+    /* only the opacity changed: xloadcols() would also reset colors set at
+     * runtime (OSC 4/10/11/12, e.g. from pywal) to the compiled-in ones */
+    xloadalpha();
+    xclear(0, 0, win.w, win.h); /* margins too */
     redraw();
 }
 
@@ -891,6 +895,28 @@ xsetcolorname(int x, const char *name)
 
 	XftColorFree(xw.dpy, xw.vis, xw.cmap, &dc.col[x]);
 	dc.col[x] = ncolor;
+
+	/* keep the background transparency (alpha patch) when it is recolored,
+	 * e.g. by pywal's OSC 11 on a theme switch */
+	if (x == defaultbg) {
+		xloadalpha();
+		/* repaint the margins outside the cell grid as well: the redraw
+		 * that follows only paints cells, leaving an old-colored strip */
+		xclear(0, 0, win.w, win.h);
+	}
+
+	return 0;
+}
+
+int
+xgetcolor(int x, unsigned char *r, unsigned char *g, unsigned char *b)
+{
+	if (!BETWEEN(x, 0, dc.collen - 1))
+		return 1;
+
+	*r = dc.col[x].color.red >> 8;
+	*g = dc.col[x].color.green >> 8;
+	*b = dc.col[x].color.blue >> 8;
 
 	return 0;
 }
@@ -2377,7 +2403,8 @@ focus(XEvent *ev)
 			ttywrite("\033[I", 3, 0);
 		if (!focused) {
 			focused = 1;
-			xloadcols();
+			xloadalpha(); /* focused opacity; keep runtime colors */
+			xclear(0, 0, win.w, win.h); /* margins too */
 			tfulldirt();
 		}
 	} else {
@@ -2388,7 +2415,8 @@ focus(XEvent *ev)
 			ttywrite("\033[O", 3, 0);
 		if (focused) {
 			focused = 0;
-			xloadcols();
+			xloadalpha(); /* unfocused opacity; keep runtime colors */
+			xclear(0, 0, win.w, win.h); /* margins too */
 			tfulldirt();
 		}
 	}

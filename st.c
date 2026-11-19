@@ -1990,6 +1990,25 @@ csireset(void)
 	memset(&csiescseq, 0, sizeof(csiescseq));
 }
 
+/* Reply to an OSC 10/11/12 color query ("?") with the current color. */
+static void
+osc_color_response(int num, int index)
+{
+	char buf[32];
+	unsigned char r, g, b;
+	int n;
+
+	if (xgetcolor(index, &r, &g, &b)) {
+		fprintf(stderr, "erresc: failed to fetch osc color %d\n", num);
+		return;
+	}
+
+	n = snprintf(buf, sizeof(buf), "\033]%d;rgb:%02x%02x/%02x%02x/%02x%02x\007",
+	             num, r, r, g, g, b, b);
+	if (n > 0 && (size_t)n < sizeof(buf))
+		ttywrite(buf, n, 1);
+}
+
 void
 strhandle(void)
 {
@@ -2027,6 +2046,20 @@ strhandle(void)
 					fprintf(stderr, "erresc: invalid base64\n");
 				}
 			}
+			return;
+		case 10: /* default foreground */
+		case 11: /* default background */
+		case 12: /* cursor color */
+			if (narg < 2)
+				break;
+			p = strescseq.args[1];
+			j = (par == 10) ? defaultfg : (par == 11) ? defaultbg : defaultcs;
+			if (!strcmp(p, "?"))
+				osc_color_response(par, j);
+			else if (xsetcolorname(j, p))
+				fprintf(stderr, "erresc: invalid color %d: %s\n", par, p);
+			else
+				tfulldirt(); /* repaint everything, incl. the border */
 			return;
 		case 4: /* color set */
 			if (narg < 3)
