@@ -903,9 +903,34 @@ xsetcolorname(int x, const char *name)
 		/* repaint the margins outside the cell grid as well: the redraw
 		 * that follows only paints cells, leaving an old-colored strip */
 		xclear(0, 0, win.w, win.h);
+		/* tell apps that asked (mode 2031) that the theme changed */
+		xthemereport(0);
 	}
 
 	return 0;
+}
+
+/*
+ * Theme report for mode 2031 / DSR 996: CSI ? 997 ; 1 n for a dark default
+ * background, CSI ? 997 ; 2 n for a light one. Sent unprompted only when the
+ * application enabled mode 2031; force is used to answer an explicit query.
+ */
+void
+xthemereport(int force)
+{
+	unsigned char r, g, b;
+	char buf[16];
+	int n;
+
+	if (!force && !IS_SET(MODE_THEMEUPDATE))
+		return;
+	if (xgetcolor(defaultbg, &r, &g, &b))
+		return;
+
+	/* perceived brightness, 0..255 */
+	n = snprintf(buf, sizeof(buf), "\033[?997;%dn",
+	             (r * 299 + g * 587 + b * 114) / 1000 < 128 ? 1 : 2);
+	ttywrite(buf, n, 0);
 }
 
 int
@@ -2835,6 +2860,9 @@ reload(void)
 
 	/* triggers re-render if we're visible. */
 	ttywrite("\033[O", 3, 1);
+
+	/* colors may have changed between dark and light (mode 2031) */
+	xthemereport(0);
 }
 
 void

@@ -1706,6 +1706,9 @@ tsetmode(int priv, int set, int *args, int narg)
 			case 2004: /* 2004: bracketed paste mode */
 				xsetmode(set, MODE_BRCKTPASTE);
 				break;
+			case 2031: /* 2031: color theme (dark/light) updates */
+				xsetmode(set, MODE_THEMEUPDATE);
+				break;
 			/* Not implemented mouse modes. See comments there. */
 			case 1001: /* mouse highlight mode; can hang the
 				      terminal by design when implemented. */
@@ -1925,7 +1928,9 @@ csihandle(void)
 		tsetattr(csiescseq.arg, csiescseq.narg);
 		break;
 	case 'n': /* DSR – Device Status Report (cursor position) */
-		if (csiescseq.arg[0] == 6) {
+		if (csiescseq.priv && csiescseq.arg[0] == 996) {
+			xthemereport(1); /* color theme query: dark or light */
+		} else if (csiescseq.arg[0] == 6) {
 			len = snprintf(buf, sizeof(buf), "\033[%i;%iR",
 					term.c.y+1, term.c.x+1);
 			ttywrite(buf, len, 0);

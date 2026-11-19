@@ -19,6 +19,7 @@ enum win_mode {
 	MODE_MOUSEMANY   = 1 << 15,
 	MODE_BRCKTPASTE  = 1 << 16,
 	MODE_NUMLOCK     = 1 << 17,
+	MODE_THEMEUPDATE = 1 << 18, /* 2031: report dark/light theme changes */
 	MODE_MOUSE       = MODE_MOUSEBTN|MODE_MOUSEMOTION|MODE_MOUSEX10\
 	                  |MODE_MOUSEMANY,
 };
@@ -31,6 +32,7 @@ void xfinishdraw(void);
 void xloadcols(void);
 int xsetcolorname(int, const char *);
 int xgetcolor(int, unsigned char *, unsigned char *, unsigned char *);
+void xthemereport(int);
 void xseticontitle(char *);
 void xsettitle(char *);
 int xsetcursor(int);
