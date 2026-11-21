@@ -6,7 +6,13 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static char *font = "FiraCode:pixelsize=16:antialias=true:autohint=true";
-static char *font2[] = { "JoyPixels:pixelsize=14:antialias=true:autohint=true" };
+/* Fallbacks tried before fontconfig's own guess. Fira Code has no braille, and
+ * fontconfig picks FreeMono, which draws unraised dots as hollow circles (ugly
+ * btop graphs); FiraCode Nerd Font Mono has braille with Fira Code's metrics. */
+static char *font2[] = {
+	"JoyPixels:pixelsize=14:antialias=true:autohint=true",
+	"FiraCode Nerd Font Mono:pixelsize=16:antialias=true:autohint=true",
+};
 static int borderpx = 2;
 
 /*
